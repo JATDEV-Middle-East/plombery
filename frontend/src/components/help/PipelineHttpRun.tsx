@@ -8,11 +8,13 @@ import {
 } from '@tremor/react'
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import {
-  okaidia,
-  oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism'
+// Import the syntax highlighter with type assertion
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import oneLight from 'react-syntax-highlighter/dist/cjs/styles/prism/one-light';
+import okaidia from 'react-syntax-highlighter/dist/cjs/styles/prism/okaidia';
+
+// Create a type-asserted version of the component
+const SafeSyntaxHighlighter = SyntaxHighlighter as any;
 
 import CopyButton from '@/components/CopyButton'
 import Dialog from '@/components/Dialog'
@@ -80,13 +82,17 @@ httpx.post('${getPipelineRunUrl(pipelineId)}', json={${triggerId ? `\n  "trigger
             {SNIPPETS.map((snippet) => (
               <TabPanel key={snippet.name}>
                 <div className="mt-6 relative group">
-                  <SyntaxHighlighter
-                    language={snippet.language}
-                    style={isDark ? okaidia : oneLight}
-                    customStyle={{ borderRadius: 8 }}
-                  >
-                    {snippet.code}
-                  </SyntaxHighlighter>
+                  <div className="text-xs">
+                    <SafeSyntaxHighlighter
+                      language={snippet.language}
+                      style={isDark ? okaidia : oneLight}
+                      customStyle={{ margin: 0, borderRadius: 8, background: isDark ? '#272822' : '#f5f5f5' }}
+                      wrapLines={true}
+                      wrapLongLines={true}
+                    >
+                      {snippet.code}
+                    </SafeSyntaxHighlighter>
+                  </div>
 
                   <CopyButton
                     content={snippet.code}
